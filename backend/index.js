@@ -2,11 +2,8 @@
 const express = require('express');
 const app = express();
 
-//import dotenv
-require('dotenv').config();
-
-// import cors
-const cors = require('cors');
+require('dotenv').config(); //import dotenv
+const cors = require('cors'); // import cors
 
 // connect to database
 const connectDB = require('./config/db');
@@ -19,10 +16,15 @@ const userRoutes = require('./routes/userRoutes');
 app.use(express.json());
 app.use(cors());
 
-// server
-app.listen(process.env.PORT, () => {
-    console.log(`Server is running on port ${process.env.PORT}`);
+// * routes *
+app.use('/api/users', userRoutes); // user routes
+
+// test api
+app.use('/', (req, res) => { 
+    res.send('Hello World');
 });
 
-// routes
-app.use('/api/users', userRoutes);
+// server
+app.listen(process.env.APP_PORT, () => {
+    console.log(`Server is running on port ${process.env.APP_PORT}`);
+});
