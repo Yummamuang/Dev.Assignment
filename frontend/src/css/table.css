@@ -1,0 +1,76 @@
+input {
+    width: 880px;
+    outline: none;
+}
+
+#search-bar {
+    width: 900px;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    margin-left: 20px;
+    border-bottom: 2px solid var(--green-color);
+}
+
+table, tr, td {
+    border: 1px solid var(--gray-color);
+    border-collapse: collapse;
+}
+
+table {
+    width: 900px;
+    margin-left: 20px;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+thead { 
+    background: var(--gray-color);
+    width: 100%;
+    display: block;
+}
+
+thead tr {
+    width: 100%;
+    display: block;
+}
+
+thead td {
+    display: inline-block;
+    width: 18%;
+    padding: 10px;
+}
+
+thead td:last-child {
+    width: 28%;
+}
+
+tbody {
+    display: block;
+    width: 100%;
+    overflow: auto scroll;
+    height: 400px;
+}
+
+tbody tr {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+}
+
+tbody td {
+    width: 18%;
+    padding: 10px 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+tbody td:last-child {
+    width: 28%;
+    white-space: nowrap;
+}
+
+tfoot td {
+    padding: 10px;
+}
