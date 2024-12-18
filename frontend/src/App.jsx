@@ -2,11 +2,14 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 // import pages
-import { Users, UserDetail } from "./pages";
+import { Users } from "./pages";
 
 // import css
 import "./App.css";
 import "./css/font.css"
+
+// import bootstrap
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
@@ -15,7 +18,6 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Users />} /> {/* Users */}
-          <Route path="/user/:id" element={<UserDetail />} /> {/* UserDetail */}
         </Routes>
       </BrowserRouter>
     </div>

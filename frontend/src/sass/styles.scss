@@ -1,0 +1,19 @@
+// Import Bootstrap's SCSS
+@use "bootstrap" as *;
+
+.page-btn {
+    @extend .btn;
+    @extend .btn-primary;
+
+    --bs-btn-padding-x: .5rem;
+    --bs-btn-padding-y: .15rem;
+}
+
+.select-page-size {
+    @extend .form-select;
+    @extend .form-select-sm;
+
+    padding: 5px;
+    font-size: 1rem;
+    width: 80px;
+}

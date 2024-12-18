@@ -1,0 +1,9 @@
+.userDetail {
+    margin-left: 20px;
+}
+
+.user-detail {
+    border-top: 2px solid var(--green-color);
+    border-bottom: 2px solid var(--green-color);
+    width: 900px;
+}

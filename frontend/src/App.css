@@ -1,17 +1,17 @@
 /* root */
 :root {
-  --black-color: #171616;
-  --gray-color: #dbe1e9;
-  --green-color: #237140;
+    --black-color: #171616;
+    --gray-color: #dbe1e9;
+    --green-color: #237140;
 }
 
 /* reset */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-  color: var(--black-color);
+    color: var(--black-color);
 }

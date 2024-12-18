@@ -5,10 +5,12 @@ import { useEffect, useState } from "react";
 import api from "../services/apiService";
 
 // import css
+import "../sass/styles.scss"
 import "../css/table.css";
 import icon from "../css/icon";
 
-function Table() {
+function Table({ setUserId }) {
+    // * Show Table *
     // define state
     const [users, setUsers] = useState([]); // users
     const [page, setPage] = useState(1); // current page
@@ -16,87 +18,119 @@ function Table() {
     const [limit, setLimit] = useState(30); // limit per page
     const [pageIndex, setPageIndex] = useState(0); // index of page
 
-    // fetch users
-    useEffect(() => {
-        const fetchUsers = async () => {
-            const users = await api.getAllusers();
-            setUsers(users);
-            setPageCount(Math.ceil(users.length / limit));
-        }
+    const resetPage = () => {
+        setPage(1);
+        setPageIndex(0);
+    }
 
-        fetchUsers(); // call fetchUsers
-    }, [limit, page]);
+    // fetch users
+    const fetch = async () => {
+        await api.getAllusers()
+            .then(res => {
+                setUsers(res);
+                setPageCount(Math.ceil(res.length / limit));
+            });
+    }
+
+    // fetch
+    useEffect(() => {
+        fetch(); // call fetchUsers
+    }, []);
 
     // loop page
     const pagesArray = [...Array(pageCount + 1).keys()].slice(1);
 
     // handle on page change
     const handleOnLimitChange = ((newLimit) => {
-        setPage(1);
-        setPageIndex(0);
+        resetPage();
         setLimit(newLimit);
+        setPageCount(Math.ceil(users.length / newLimit));
     });
 
-    useEffect(() => {
-        console.log("PageIndex", pageIndex);
-    }, [pageIndex]);
+    // * Search in Table *
+    const handleSearch = async (e) => {
+        const value = e.target.value;
+        if (!value) return fetch();
+        await api.searchUser(value)
+            .then(res => {
+                setUsers(res);
+                resetPage();
+                setPageCount(Math.ceil(res.length / limit));
+            })
+    }
 
     return (
         <div>
-            <div id="search-bar" className="my-4" >
-                <input type="text" placeholder="ค้นหาเจ้าของ" />
+            {/* search bar */}
+            <div id="search-bar" className="my-2" >
+                <input className="border-0 " type="text" placeholder="ค้นหาเจ้าของ" onChange={(e) => handleSearch(e)} />
                 {icon.search}
             </div>
 
+            {/* table */}
             <table>
                 <thead>
                     <tr>
                         <td className="text-center">Operation</td>
-                        <td className="pl-2">HN เจ้าของ</td>
-                        <td className="pl-2">ชิ่อเจ้าของ</td>
-                        <td className="pl-2">เบอร์ติดต่อ</td>
-                        <td className="pl-2">อีเมล</td>
+                        <td className="ps-2">HN เจ้าของ</td>
+                        <td className="ps-2">ชิ่อเจ้าของ</td>
+                        <td className="ps-2">เบอร์ติดต่อ</td>
+                        <td className="ps-2">อีเมล</td>
                     </tr>
                 </thead>
                 <tbody >
                     {
                         users.slice(limit * (page - 1), limit * page).map((user, index) => {
                             return (
-                                <tr key={index}>
-                                    <td><div className="flex justify-center">{icon.edit}</div></td>
-                                    <td className="pl-2">{user.hn}</td>
-                                    <td className="pl-2">{user.firstname} {user.lastname}</td>
-                                    <td className="pl-2">{user.phone}</td>
-                                    <td className="pl-2">{user.email}</td>
+                                <tr className="border border-1" key={index}>
+                                    <td className="border border-1">
+                                        <div className="d-flex justify-content-center edit"
+                                            onClick={() => setUserId(user._id)}
+                                        >
+                                            {icon.edit}
+                                        </div>
+                                    </td>
+                                    <td className="ps-2 border border-1">{user.hn}</td>
+                                    <td className="ps-2 border border-1">
+                                        <span className="text-primary" style={{ cursor: "pointer" }}
+                                            onClick={() => setUserId(user._id)}
+                                        >
+                                            {user.firstname} {user.lastname}
+                                        </span>
+                                    </td>
+                                    <td className="ps-2 border border-1">{user.phone}</td>
+                                    <td className="ps-2 border border-1">{user.email}</td>
                                 </tr>
                             )
                         })
                     }
                 </tbody>
                 <tfoot>
-                    <tr>
+                    <tr className="border border-1">
                         <td>
-                            <div className="flex justify-between">
-                                <div className="flex items-center">
-                                    <div className="select-none" style={{ width: '240px' }}>
+                            <div className="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div >
                                         Page {page} of {pageCount}
-                                        <span className="ml-2"></span>
+                                        <span className="ms-2"></span>
                                         ({users.length} items)
-                                        <span className="mr-2"></span>
+                                        <span className="ms-2"></span>
                                     </div>
-                                    <div className={page === 1 ? 'pointer-events-none p-1 ml-2 mr-3' : 'rounded-full bg-slate-900 p-1 ml-2 mr-3 cursor-pointer hover:opacity-90 select-none'}
+                                </div>
+                                <div className="d-flex align-items-center">
+                                    <div className={page === 1 ? 'pe-none btn btn-light btn-sm p-1 ms-2 me-3 rounded-circle' : 'btn btn-dark btn-sm p-1 ms-2 me-3 rounded-circle'}
                                         onClick={() => {
                                             setPage(page - 1);
                                             page === 1 ? setPageIndex(0) : pageIndex !== 0 ? page <= pageCount - 6 && setPageIndex(pageIndex - 1) : null;
                                         }}>
                                         {icon.angle_left}
                                     </div>
-                                    <div className="select-none" style={{ width: '240px' }}>
+                                    <div>
                                         {
                                             pagesArray.slice(pageIndex, pageIndex + 5).map((number) => {
                                                 return (
                                                     <button
-                                                        className={page === number ? 'bg-blue-700 mx-1 w-5 rounded text-white pointer-events-none' : 'mx-1 hover:text-red-500 hover:underline w-5'}
+                                                        className={page === number ? 'page-btn rounded-3 pe-none mx-2' : 'page-btn btn-light mx-2'}
                                                         key={number} type="button"
                                                         onClick={() => {
                                                             setPage(number);
@@ -111,7 +145,7 @@ function Table() {
                                                 pagesArray.slice(pageCount === 6 ? pageCount - 1 : pageCount - 2, pageCount).map((number) => {
                                                     return (
                                                         <button
-                                                            className={page === number ? 'bg-blue-700 mx-1 w-5 rounded text-white pointer-events-none' : 'mx-1 hover:text-red-500 hover:underline w-5'}
+                                                            className={page === number ? 'page-btn rounded-3 pe-none mx-2' : 'page-btn btn-light mx-2'}
                                                             key={number} type="button"
                                                             onClick={() => {
                                                                 setPage(number);
@@ -124,7 +158,7 @@ function Table() {
                                             )
                                         }
                                     </div>
-                                    <div className={page === pageCount ? 'pointer-events-none p-1 ml-2 mr-3' : 'rounded-full bg-slate-900 p-1 ml-2 mr-3 cursor-pointer hover:opacity-90 select-none'}
+                                    <div className={page === pageCount || pageCount === 0 ? 'pe-none btn btn-light btn-sm p-1 ms-2 me-3 rounded-circle' : 'btn btn-dark btn-sm p-1 ms-2 me-3 rounded-circle'}
                                         onClick={() => {
                                             setPage(page + 1);
                                             pageIndex < pageCount - 7 ? (page >= 5 && page < pageCount - 2 && setPageIndex(pageIndex + 1)) : null;
@@ -132,10 +166,11 @@ function Table() {
                                         {icon.angle_right}
                                     </div>
                                 </div>
-                                <div className="select-none">
-                                    Page size:
+                                <div className="d-flex align-items-center">
+                                    <div > Page size:</div>
                                     <select
-                                        className="ml-2 outline-none border rounded"
+                                        title="select-page-size"
+                                        className="ms-2 select-page-size"
                                         value={limit}
                                         onChange={(e) => {
                                             handleOnLimitChange(e.target.value);
@@ -149,7 +184,6 @@ function Table() {
                                     </select>
                                 </div>
                             </div>
-
                         </td>
                     </tr>
                 </tfoot>
